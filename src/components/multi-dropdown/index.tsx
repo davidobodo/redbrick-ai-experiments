@@ -5,20 +5,39 @@ export default function Dropdown({ options = OPTIONS }) {
 	const [selected, setSelected] = useState<{ value: string; tree_key: string; tree_level: string }[]>([]);
 	const onSelectOption = useCallback((e, pos, selected) => {
 		const { value, tree_key, tree_level } = e.currentTarget.dataset;
-		const clonedState = JSON.parse(JSON.stringify(selected));
-		clonedState.splice(pos, 1, {
-			value,
-			tree_key,
-			tree_level,
-		});
 
-		// Clear other tree values
-		const nextValue = clonedState[pos + 1];
-		if (nextValue && (nextValue?.tree_key !== tree_key || nextValue?.tree_level !== tree_level)) {
-			clonedState.length = pos + 1;
+		const newTree = [
+			{
+				value,
+				tree_key,
+				tree_level,
+			},
+		];
+
+		let curr = e.currentTarget;
+		while (curr.parentElement.className !== "dropdown") {
+			curr = curr.parentElement;
+			if (curr.dataset.value) {
+				newTree.push({ ...curr.dataset });
+			}
 		}
 
-		setSelected(clonedState);
+		setSelected(newTree.reverse());
+
+		// const clonedState = JSON.parse(JSON.stringify(selected));
+		// clonedState.splice(pos, 1, {
+		// 	value,
+		// 	tree_key,
+		// 	tree_level,
+		// });
+
+		// // Clear other tree values
+		// const nextValue = clonedState[pos + 1];
+		// if (nextValue && (nextValue?.tree_key !== tree_key || nextValue?.tree_level !== tree_level)) {
+		// 	clonedState.length = pos + 1;
+		// }
+
+		// setSelected(clonedState);
 	}, []);
 
 	const [inputValue, setInputValue] = useState("");
@@ -76,7 +95,8 @@ const Option = memo(({ value, label, children, pos, onSelectOption, selected, is
 			<span className={isSelected ? "selected label" : "label"}>
 				{label} - <span style={{ color: "blue" }}>{pos}</span>
 			</span>
-			{isSelected && children?.length > 0 ? (
+			{/* {isSelected && children?.length > 0 ? ( */}
+			{(selected.length === 0 || isSelected) && children?.length > 0 ? (
 				<ul className="option-children">
 					{children.map((item) => {
 						const { label, key, children } = item;
