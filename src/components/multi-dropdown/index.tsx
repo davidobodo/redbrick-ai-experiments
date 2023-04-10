@@ -96,7 +96,8 @@ const Option = memo(({ value, label, children, pos, onSelectOption, selected, is
 				{label} - <span style={{ color: "blue" }}>{pos}</span>
 			</span>
 			{/* {isSelected && children?.length > 0 ? ( */}
-			{(selected.length === 0 || isSelected) && children?.length > 0 ? (
+			{/* {(selected.length === 0 || isSelected) && children?.length > 0 ? ( */}
+			{children?.length > 0 && (
 				<ul className="option-children">
 					{children.map((item) => {
 						const { label, key, children } = item;
@@ -115,9 +116,11 @@ const Option = memo(({ value, label, children, pos, onSelectOption, selected, is
 						);
 					})}
 				</ul>
-			) : (
-				<></>
 			)}
+
+			{/* ) : (
+				<></>
+			)} */}
 		</li>
 	);
 });
