@@ -2,7 +2,7 @@ import { OPTIONS } from "./constants";
 import { useCallback, useState, memo } from "react";
 
 export default function Dropdown({ options = OPTIONS }) {
-	const [selected, setSelected] = useState([]);
+	const [selected, setSelected] = useState<{ value: string; tree_key: string; tree_level: string }[]>([]);
 	const onSelectOption = useCallback((e, pos, selected) => {
 		const { value, tree_key, tree_level } = e.target.dataset;
 		const clonedState = JSON.parse(JSON.stringify(selected));
@@ -20,16 +20,24 @@ export default function Dropdown({ options = OPTIONS }) {
 		setSelected(clonedState);
 	}, []);
 
+	const [inputValue, setInputValue] = useState("");
+	const handleChange = (e) => {
+		const { value } = e.target;
+		setInputValue(value);
+		/**
+		 * METHOD 1
+		 * Go through every tree everytime
+		 *
+		 * METHOD 2
+		 * Precomputation
+		 */
+	};
+
 	return (
 		<div className="wrapper">
-			<div
-				style={{
-					marginBottom: "30px",
-				}}
-			>
-				{JSON.stringify(selected)}
-			</div>
-			<ul className="dropdown" onClick={onSelectOption}>
+			<input type="text" placeholder="Search" value={inputValue} onChange={handleChange} />
+			<div className="display-selected">{JSON.stringify(selected)}</div>
+			<ul className="dropdown">
 				{options.map((item, index) => {
 					const { label, key, children } = item;
 					return (
