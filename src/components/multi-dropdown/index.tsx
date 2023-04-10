@@ -4,7 +4,7 @@ import { useCallback, useState, memo } from "react";
 export default function Dropdown({ options = OPTIONS }) {
 	const [selected, setSelected] = useState<{ value: string; tree_key: string; tree_level: string }[]>([]);
 	const onSelectOption = useCallback((e, pos, selected) => {
-		const { value, tree_key, tree_level } = e.target.dataset;
+		const { value, tree_key, tree_level } = e.currentTarget.dataset;
 		const clonedState = JSON.parse(JSON.stringify(selected));
 		clonedState.splice(pos, 1, {
 			value,
@@ -17,6 +17,7 @@ export default function Dropdown({ options = OPTIONS }) {
 		if (nextValue && (nextValue?.tree_key !== tree_key || nextValue?.tree_level !== tree_level)) {
 			clonedState.length = pos + 1;
 		}
+
 		setSelected(clonedState);
 	}, []);
 
@@ -61,20 +62,20 @@ export default function Dropdown({ options = OPTIONS }) {
 
 const Option = memo(({ value, label, children, pos, onSelectOption, selected, isSelected, index }) => {
 	return (
-		<>
-			<li
-				value={value}
-				data-value={value}
-				data-tree_key={index}
-				data-tree_level={pos}
-				className={isSelected ? "selected option" : "option"}
-				onClick={(e) => {
-					e.stopPropagation();
-					onSelectOption(e, pos, selected);
-				}}
-			>
+		<li
+			value={value}
+			data-value={value}
+			data-tree_key={index}
+			data-tree_level={pos}
+			className="option"
+			onClick={(e) => {
+				e.stopPropagation();
+				onSelectOption(e, pos, selected);
+			}}
+		>
+			<span className={isSelected ? "selected label" : "label"}>
 				{label} - <span style={{ color: "blue" }}>{pos}</span>
-			</li>
+			</span>
 			{isSelected && children?.length > 0 ? (
 				<ul className="option-children">
 					{children.map((item) => {
@@ -97,6 +98,6 @@ const Option = memo(({ value, label, children, pos, onSelectOption, selected, is
 			) : (
 				<></>
 			)}
-		</>
+		</li>
 	);
 });
